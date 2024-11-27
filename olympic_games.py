@@ -6,10 +6,12 @@ parser.add_argument('-medals', nargs='?',type=str,help="-medals")
 parser.add_argument('-country', nargs='?',type=str,help="Name of team or abbreviation")
 parser.add_argument('-year', nargs='?',type=int,help="Year of the olympiad")
 parser.add_argument('-output', nargs='?',type=argparse.FileType('w'),help="result.txt")
+parser.add_argument('-overall',nargs='*',type=str,help="countries")
 args=parser.parse_args()
 input_table=[]
 output_table=[]
 medal_counts = {"Gold": 0, "Silver": 0, "Bronze": 0}
+years_medal_dict={}
 with args.input_file as input_file:
     for line in input_file:
         line=line[:-1]
@@ -38,3 +40,29 @@ if args.country and args.year:
                     output_file.write(f"{medal}: {count}\n")
     else:
         print("No records found matching the criteria.")
+if args.overall:
+    for line in input_table:
+        if line[9].isdigit():
+            year = int(line[9])
+        medal = line[14]
+        country = line[6]
+        country_initials=line[7]
+        if (country in args.overall) or (country_initials in args.overall):
+            key = country if country in args.overall else country_initials
+            if key not in years_medal_dict:
+                years_medal_dict[key] = {}
+            if year not in years_medal_dict[key]:
+                years_medal_dict[key][year] = 0
+            years_medal_dict[key][year] += 1
+    for country in args.overall:
+        if country in years_medal_dict:
+            best_year = None
+            max_medals = 0
+            for year, medal_count in years_medal_dict[country].items():
+                if medal_count > max_medals:
+                    max_medals = medal_count
+                    best_year = year
+            if best_year is not None:
+                print(f"{country}: {best_year} ({max_medals} medals)")
+        else:
+            print(f"{country}: No data available")
