@@ -5,6 +5,7 @@ parser.add_argument('input_file',type=argparse.FileType('r'),help="File to input
 parser.add_argument('-medals', nargs='?',type=str,help="-medals")
 parser.add_argument('-country', nargs='?',type=str,help="Name of team or abbreviation")
 parser.add_argument('-year', nargs='?',type=int,help="Year of the olympiad")
+parser.add_argument('-total', nargs='*', type=str, hepl="Number of olympic medals by year")
 parser.add_argument('-output', nargs='?',type=argparse.FileType('w'),help="result.txt")
 parser.add_argument('-overall',nargs='*',type=str,help="countries")
 args=parser.parse_args()
