@@ -5,7 +5,7 @@ parser.add_argument('input_file',type=argparse.FileType('r'),help="File to input
 parser.add_argument('-medals', nargs='?',type=str,help="-medals")
 parser.add_argument('-country', nargs='?',type=str,help="Name of team or abbreviation")
 parser.add_argument('-year', nargs='?',type=int,help="Year of the olympiad")
-parser.add_argument('-total', nargs='*', type=str, hepl="Number of olympic medals by year")
+parser.add_argument('-total', nargs='?', type=str, help="Number of olympic medals by year")
 parser.add_argument('-output', nargs='?',type=argparse.FileType('w'),help="result.txt")
 parser.add_argument('-overall',nargs='*',type=str,help="countries")
 args=parser.parse_args()
@@ -41,6 +41,32 @@ if args.country and args.year:
                     output_file.write(f"{medal}: {count}\n")
     else:
         print("No records found matching the criteria.")
+
+if args.total:
+    medal_counts = {"Gold": 0, "Silver": 0, "Bronze": 0}
+    for line in input_table:
+        if int(line[9] == args.total):
+            country = line[6] or line[7]
+            medal = line[14]
+            if medal in medal_counts[country]:
+                medal_counts[country][medal] += 1
+
+        if medal_counts:
+            print(f"\nMedal counts for {args.total}:")
+            result = []
+            for country, medals in medal_counts.items():
+                result.append(f'{country} - {medals['Gold']} - {medals['Silver']} - {medals["Bronze"]}')
+            for row in result:
+                print(row)
+
+        if args.output:
+            with args.output as output_file:
+                output_file.write("Medal Summary:\n")
+                for row in result:
+                    output_file.write(f"{row}\n")
+else:
+    print("No records found matching the criteria.")
+
 if args.overall:
     for line in input_table:
         if line[9].isdigit():
