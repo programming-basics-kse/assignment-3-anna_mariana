@@ -135,7 +135,7 @@ if args.interactive:
             average_bronze = 0
 
         print(f"\nStatistics for {task}:")
-        print(f"- First participation: {first_participation[0]} in {first_participation[1]}")
+        print(f"- First participation: {first_participation_year} in {first_participation_city}")
         print(f"- Best Olympics: {best_year} ({max_medals} medals)")
         print(f"- Worst Olympics: {worst_year} ({min_medals} medals)")
         print(f"- Average medals per Olympics:")
