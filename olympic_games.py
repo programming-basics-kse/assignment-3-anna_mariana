@@ -55,7 +55,7 @@ if args.total:
             print(f"\nMedal counts for {args.total}:")
             result = []
             for country, medals in medal_counts.items():
-                result.append(f'{country} - {medals_count['Gold']} - {medals_count['Silver']} - {medals_count["Bronze"]}')
+                result.append(f'{country} - {medals_counts['Gold']} - {medals_counts['Silver']} - {medals_counts["Bronze"]}')
             for row in result:
                 print(row)
 
