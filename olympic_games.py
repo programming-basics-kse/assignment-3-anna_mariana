@@ -43,11 +43,13 @@ if args.country and args.year:
         print("No records found matching the criteria.")
 
 if args.total:
-    medal_counts = {"Gold": 0, "Silver": 0, "Bronze": 0}
+    medal_counts = {}
     for line in input_table:
         if int(line[9] == args.total):
             country = line[6] or line[7]
             medal = line[14]
+            if country not in medal_counts:
+                medal_counts[country] = {'Gold': 0, "Silver": 0, "Bronze": 0}
             if medal in medal_counts[country]:
                 medal_counts[country][medal] += 1
 
@@ -65,7 +67,7 @@ if args.total:
                 for row in result:
                     output_file.write(f"{row}\n")
 else:
-    print("No records found matching the criteria.")
+    print(f"No records found matching the criteria for the year {args.total}.")
 
 if args.overall:
     for line in input_table:
