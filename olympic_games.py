@@ -88,40 +88,45 @@ if args.interactive:
             line=line[:-1]
             if line[6] == task or line[7] == task:
                 country_stats.append(line)
+
         if not country_stats:
             print(f"No data available for '{task}'.")
             continue
 
         first_participation_year = None
         first_participation_city = None
+        medals_by_year = {}
+
         for row in country_stats:
             year = int(row[9])
             city = row[11]
-            if first_participation_year is None or year < first_participation_year[0]:
+            medal = row[14]
+            if (first_participation_year is None) or (year < first_participation_year):
                 first_participation_year = year
                 first_participation_city = city
 
-        medals_by_year = {}
-        for row in country_stats:
-            year = int(row[9])
-            medal = row[14]
             if medal not in medals_by_year:
                 medals_by_year[year] = {"Gold": 0, "Silver": 0, "Bronze": 0}
             if medal in medals_by_year[year]:
                 medals_by_year[year][medal] += 1
 
+        if not medals_by_year:
+            print(f"No Olympic participation data found for {task}.")
+            continue
+
         best_year, max_medals = None, 0
-        worst_year, min_medals = None, 0
-        for medals in medals_by_year.items():
+        worst_year, min_medals = None, float('inf')
+
+        for year, medals in medals_by_year.items():
             total_medals = sum(medals.values())
             if total_medals > max_medals:
                 best_year, max_medals = year, total_medals
-            if total_medals < min_medals:
+            if 0 < total_medals < min_medals:
                 worst_year, min_medals = year, total_medals
 
         total_olympics = len(medals_by_year)
         total_gold, total_silver, total_bronze = 0, 0, 0
-        for medals in medals_by_year.values():
+        for year, medals in medals_by_year.items():
             total_gold += medals["Gold"]
             total_silver += medals["Silver"]
             total_bronze += medals["Bronze"]
