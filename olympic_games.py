@@ -78,14 +78,15 @@ if args.total:
 if args.interactive:
     print("Welcome to interactive mode! Write a country/country code or 'exit' to exit")
     while True:
-        task = input("Choose: \n1. Country or its code \n2.Exit")
+        task = input("Choose: Country or its code or Exit")
         if task.lower() == 'exit':
             print("Exiting... \nBye!")
             break
+        country_stats = []
         for line in input_table:
             line=line[:-1]
             if line[6] == task or line[7] == task:
-                country_stats = []
+                country_stats.append(line)
             if not country_stats:
                 print(f"No data available for '{task}'.")
                 continue
@@ -97,36 +98,38 @@ if args.interactive:
                 if first_participation is None or year < first_participation[0]:
                     first_participation = (year, city)
 
-            if country_stats in years_medal_dict:
-                best_year = None
-                max_medals = 0
-                for year, medal_count in years_medal_dict[country_stats].items():
-                    if medal_count > max_medals:
-                        max_medals = medal_count
-                        best_year = year
-                if best_year is not None:
-                    print(f"{country_stats}: {best_year} ({max_medals} medals)")
+            medals_by_year = {}
+            for row in country_stats:
+                year = int(row[9])
+                medal = row[14]
+                if medal not in medals_by_year:
+                    medals_by_year[year] = {"Gold": 0, "Silver": 0, "Bronze": 0}
+                if medal in medals_by_year[year]:
+                    medals_by_year[year][medal] += 1
 
-            if country_stats in years_medal_dict:
-                worst_year = None
-                min_medals = 0
-                for year, medal_count in years_medal_dict[country_stats].items():
-                    if medal_count < min_medals:
-                        min_medals = medal_count
-                        worst_year = year
-                if worst_year is not None:
-                    print(f"{country_stats}: {worst_year} ({min_medals} medals)")
+            best_year, max_medals = None, 0
+            worst_year, min_medals = None, 0
+            for medals in medals_by_year.items():
+                total_medals = sum(medals.values())
+                if total_medals > max_medals:
+                    best_year, max_medals = year, total_medals
+                if total_medals < min_medals:
+                    worst_year, min_medals = year, total_medals
 
-            total_olympics = len(years_medal_dict)
+            total_olympics = len(medals_by_year)
             total_gold, total_silver, total_bronze = 0, 0, 0
-            for medals in years_medal_dict.values():
+            for medals in medals_by_year.values():
                 total_gold += medals["Gold"]
                 total_silver += medals["Silver"]
                 total_bronze += medals["Bronze"]
-
-            average_gold = total_gold / total_olympics
-            average_silver = total_silver / total_olympics
-            average_bronze = total_bronze / total_olympics
+            if total_olympics > 0:
+                average_gold = total_gold / total_olympics
+                average_silver = total_silver / total_olympics
+                average_bronze = total_bronze / total_olympics
+            else:
+                average_gold = 0
+                average_silver = 0
+                average_bronze = 0
 
             print(f"\nStatistics for {task}:")
             print(f"- First participation: {first_participation[0]} in {first_participation[1]}")
