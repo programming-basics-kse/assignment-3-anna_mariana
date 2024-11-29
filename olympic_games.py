@@ -40,6 +40,10 @@ if args.country and args.year:
                 output_file.write("\nMedal Summary:\n")
                 for medal, count in medal_counts.items():
                     output_file.write(f"{medal}: {count}\n")
+    if args.country != line[6] or args.country != line[7]:
+        print("Maybe you wrote incorrect country")
+    if args.year != line[9]:
+        print("Maybe we don't have this year in our list or in this year there wasn't olympiad")
     else:
         print("No records found matching the criteria.")
 
@@ -71,8 +75,19 @@ if args.total:
     else:
         print(f"No records found matching the criteria for the year {args.total}.")
 
-if args.interective:
-
+if args.interactive:
+    print("Welcome to interactive mode! Write a country/country code or 'exit' to exit")
+    while True:
+        task = input("Choose: \n1. Country or its code \n2.Exit")
+        if task.lower() == 'exit':
+            print("Exiting... \nBye!")
+            break
+        for line in input_table:
+            line=line[:-1]
+            if line[6] == task or line[7] == task:
+                country_stats = []
+            if not country_stats:
+                print(f"No data available for '{task}'.")
 
 if args.overall:
     for line in input_table:
