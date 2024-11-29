@@ -85,7 +85,6 @@ if args.interactive:
 
         country_stats = []
         for line in input_table:
-            line=line[:-1]
             if line[6] == task or line[7] == task:
                 country_stats.append(line)
 
