@@ -82,61 +82,64 @@ if args.interactive:
         if task.lower() == 'exit':
             print("Exiting... \nBye!")
             break
+
         country_stats = []
         for line in input_table:
             line=line[:-1]
             if line[6] == task or line[7] == task:
                 country_stats.append(line)
-            if not country_stats:
-                print(f"No data available for '{task}'.")
-                continue
+        if not country_stats:
+            print(f"No data available for '{task}'.")
+            continue
 
-            first_participation = None
-            for row in country_stats:
-                year = int(row[9])
-                city = row[11]
-                if first_participation is None or year < first_participation[0]:
-                    first_participation = (year, city)
+        first_participation_year = None
+        first_participation_city = None
+        for row in country_stats:
+            year = int(row[9])
+            city = row[11]
+            if first_participation_year is None or year < first_participation_year[0]:
+                first_participation_year = year
+                first_participation_city = city
 
-            medals_by_year = {}
-            for row in country_stats:
-                year = int(row[9])
-                medal = row[14]
-                if medal not in medals_by_year:
-                    medals_by_year[year] = {"Gold": 0, "Silver": 0, "Bronze": 0}
-                if medal in medals_by_year[year]:
-                    medals_by_year[year][medal] += 1
+        medals_by_year = {}
+        for row in country_stats:
+            year = int(row[9])
+            medal = row[14]
+            if medal not in medals_by_year:
+                medals_by_year[year] = {"Gold": 0, "Silver": 0, "Bronze": 0}
+            if medal in medals_by_year[year]:
+                medals_by_year[year][medal] += 1
 
-            best_year, max_medals = None, 0
-            worst_year, min_medals = None, 0
-            for medals in medals_by_year.items():
-                total_medals = sum(medals.values())
-                if total_medals > max_medals:
-                    best_year, max_medals = year, total_medals
-                if total_medals < min_medals:
-                    worst_year, min_medals = year, total_medals
+        best_year, max_medals = None, 0
+        worst_year, min_medals = None, 0
+        for medals in medals_by_year.items():
+            total_medals = sum(medals.values())
+            if total_medals > max_medals:
+                best_year, max_medals = year, total_medals
+            if total_medals < min_medals:
+                worst_year, min_medals = year, total_medals
 
-            total_olympics = len(medals_by_year)
-            total_gold, total_silver, total_bronze = 0, 0, 0
-            for medals in medals_by_year.values():
-                total_gold += medals["Gold"]
-                total_silver += medals["Silver"]
-                total_bronze += medals["Bronze"]
-            if total_olympics > 0:
-                average_gold = total_gold / total_olympics
-                average_silver = total_silver / total_olympics
-                average_bronze = total_bronze / total_olympics
-            else:
-                average_gold = 0
-                average_silver = 0
-                average_bronze = 0
+        total_olympics = len(medals_by_year)
+        total_gold, total_silver, total_bronze = 0, 0, 0
+        for medals in medals_by_year.values():
+            total_gold += medals["Gold"]
+            total_silver += medals["Silver"]
+            total_bronze += medals["Bronze"]
+        if total_olympics > 0:
+            average_gold = total_gold / total_olympics
+            average_silver = total_silver / total_olympics
+            average_bronze = total_bronze / total_olympics
+        else:
+            average_gold = 0
+            average_silver = 0
+            average_bronze = 0
 
-            print(f"\nStatistics for {task}:")
-            print(f"- First participation: {first_participation[0]} in {first_participation[1]}")
-            print(f"- Best Olympics: {best_year} ({max_medals} medals)")
-            print(f"- Worst Olympics: {worst_year} ({min_medals} medals)")
-            print(f"- Average medals per Olympics:")
-            print(f"  Gold: {average_gold:}, Silver: {average_silver:}, Bronze: {average_bronze:}\n")
+        print(f"\nStatistics for {task}:")
+        print(f"- First participation: {first_participation[0]} in {first_participation[1]}")
+        print(f"- Best Olympics: {best_year} ({max_medals} medals)")
+        print(f"- Worst Olympics: {worst_year} ({min_medals} medals)")
+        print(f"- Average medals per Olympics:")
+        print(f"  Gold: {average_gold:}, Silver: {average_silver:}, Bronze: {average_bronze:}\n")
 
 if args.overall:
     for line in input_table:
