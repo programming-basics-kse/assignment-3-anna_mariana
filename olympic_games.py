@@ -45,7 +45,7 @@ if args.country and args.year:
 if args.total:
     medal_counts = {}
     for line in input_table:
-        if int(line[9] == args.total):
+        if int(line[9]) == args.total:
             country = line[6] or line[7]
             medal = line[14]
             if country not in medal_counts:
@@ -57,7 +57,7 @@ if args.total:
             print(f"\nMedal counts for {args.total}:")
             result = []
             for country, medals in medal_counts.items():
-                result.append(f'{country} - {medal_counts['Gold']} - {medal_counts['Silver']} - {medal_counts["Bronze"]}')
+                result.append(f'{country} - {medals["Gold"]} - {medals["Silver"]} - {medals["Bronze"]}')
             for row in result:
                 print(row)
 
