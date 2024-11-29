@@ -7,6 +7,7 @@ parser.add_argument('-country', nargs='?',type=str,help="Name of team or abbrevi
 parser.add_argument('-year', nargs='?',type=int,help="Year of the olympiad")
 parser.add_argument('-total', nargs='?', type=str, help="Number of olympic medals by year")
 parser.add_argument('-output', nargs='?',type=argparse.FileType('w'),help="result.txt")
+parser.add_argument("-interactive", nargs='?', type = str, help = "Interactive mode")
 parser.add_argument('-overall',nargs='*',type=str,help="countries")
 args=parser.parse_args()
 input_table=[]
@@ -43,31 +44,35 @@ if args.country and args.year:
         print("No records found matching the criteria.")
 
 if args.total:
-    medal_counts = {}
+    total_medal_counts = {}
     for line in input_table:
-        if int(line[9]) == args.total:
-            country = line[6] or line[7]
-            medal = line[14]
-            if country not in medal_counts:
-                medal_counts[country] = {'Gold': 0, "Silver": 0, "Bronze": 0}
-            if medal in medal_counts[country]:
-                medal_counts[country][medal] += 1
+        if line[9].isdigit():
+            year = int(line[9])
+        country = line[6] or line[7]
+        medal = line[14]
+        if country not in total_medal_counts:
+            total_medal_counts[country] = {'Gold': 0, "Silver": 0, "Bronze": 0}
+        if medal in total_medal_counts[country]:
+            total_medal_counts[country][medal] += 1
 
-        if medal_counts:
-            print(f"\nMedal counts for {args.total}:")
-            result = []
-            for country, medals in medal_counts.items():
-                result.append(f'{country} - {medals["Gold"]} - {medals["Silver"]} - {medals["Bronze"]}')
-            for row in result:
-                print(row)
+    if total_medal_counts:
+        print(f"\nMedal counts for the year {args.total}:")
+        result = []
+        for country, medals in total_medal_counts.items():
+            result.append(f'{country} - Gold: {medals["Gold"]}, Silver: {medals["Silver"]}, Bronze: {medals["Bronze"]}')
+        for row in result:
+            print(row)
 
         if args.output:
             with args.output as output_file:
-                output_file.write("Medal Summary:\n")
+                output_file.write(f"Medal Summary for {args.total}:\n")
                 for row in result:
                     output_file.write(f"{row}\n")
-else:
-    print(f"No records found matching the criteria for the year {args.total}.")
+    else:
+        print(f"No records found matching the criteria for the year {args.total}.")
+
+if args.interective:
+
 
 if args.overall:
     for line in input_table:
